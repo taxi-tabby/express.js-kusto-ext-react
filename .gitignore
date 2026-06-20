@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+.kusto/
+test/.tmp/
+*.log
+.DS_Store

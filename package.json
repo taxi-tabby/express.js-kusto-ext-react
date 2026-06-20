@@ -1,0 +1,73 @@
+{
+  "name": "@expressjs-kusto/react",
+  "version": "0.1.0",
+  "description": "React rendering extension for the Express.js-Kusto framework — adds router.GET_REACT(...) via the CoC extension system (CSR v1).",
+  "keywords": [
+    "express",
+    "kusto",
+    "express-kusto",
+    "react",
+    "extension",
+    "ssr",
+    "csr"
+  ],
+  "author": "rkdmf0000@gmail.com",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./augment": {
+      "types": "./dist/augment.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "jest",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "peerDependencies": {
+    "express": "^4.18.0",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "react-router-dom": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "express": { "optional": false },
+    "react": { "optional": false },
+    "react-dom": { "optional": false },
+    "react-router-dom": { "optional": false }
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.11.28",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "jest": "^29.7.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0",
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
