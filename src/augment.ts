@@ -15,7 +15,7 @@ declare module '@lib/http/routing/expressRouter' {
     interface ExpressRouter {
         /**
          * Render the named React page (CSR) at this route. `component` is a page file under
-         * the configured pages directory (default `src/app/react/pages`), e.g. `GET_REACT('Home')`.
+         * the configured pages directory (default `src/app/views/react`), e.g. `GET_REACT('Home')`.
          */
         GET_REACT(component: string, options?: import('./types').ReactRouteOptions): this;
     }

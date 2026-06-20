@@ -13,7 +13,7 @@ import { renderShell } from './shell';
 import { buildClientBundle } from './bundler';
 
 const DEFAULTS = {
-    pagesDir: 'react/pages',
+    pagesDir: 'views/react',
     mountPath: '/__kusto_react',
     outDir: '.kusto/react',
     title: 'Kusto React',
