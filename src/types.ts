@@ -54,7 +54,7 @@ export interface KustoExtension {
 
 /** Options for the React extension factory `react(options)`. */
 export interface ReactExtensionOptions {
-    /** Directory (relative to the app workspace `src/app`) holding React page components. Default: `views/react`. */
+    /** Directory (relative to the app workspace `src/app`) holding React page components. Default: `views`. */
     pagesDir?: string;
     /** URL prefix the built client assets are served under. Default: `/__kusto_react`. */
     mountPath?: string;

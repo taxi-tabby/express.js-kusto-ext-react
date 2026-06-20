@@ -53,16 +53,16 @@ is recognised across your project (IntelliSense + type-checking).
 
 ### 2. Add React pages
 
-Put page components under `src/app/views/react/` (configurable). Each file default-exports a component:
+Put page components under `src/app/views/` (configurable). Each file default-exports a component:
 
 ```tsx
-// src/app/views/react/Home.tsx
+// src/app/views/Home.tsx
 export default function Home(props: { name?: string }) {
   return <h1>Hello {props.name ?? 'world'}</h1>;
 }
 ```
 
-Nested files become dotted keys: `src/app/views/react/admin/Dashboard.tsx` → `admin/Dashboard`.
+Nested files become dotted keys: `src/app/views/admin/Dashboard.tsx` → `admin/Dashboard`.
 
 ### 3. Render pages from routes
 
@@ -84,7 +84,7 @@ export default router.build();
 
 | Option | Default | Description |
 |---|---|---|
-| `pagesDir` | `views/react` | Pages directory, relative to `src/app`. |
+| `pagesDir` | `views` | Pages directory, relative to `src/app`. |
 | `mountPath` | `/__kusto_react` | URL prefix the built client assets are served under. |
 | `outDir` | `.kusto/react` | Output dir (relative to project root) for built assets. |
 | `title` | `Kusto React` | Default `<title>`. |
