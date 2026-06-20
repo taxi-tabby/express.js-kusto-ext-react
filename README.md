@@ -24,6 +24,14 @@ the bundle on boot. The new method appears in your IDE via a TypeScript declarat
 ## Install
 
 ```bash
+npm install @expressjs-kusto/react
+```
+
+`react`, `react-dom`, and `react-router-dom` are peer dependencies and are
+installed automatically by npm 7+ (and modern pnpm/yarn). If your package
+manager does not auto-install peers, add them explicitly:
+
+```bash
 npm install @expressjs-kusto/react react react-dom react-router-dom
 ```
 

@@ -37,7 +37,8 @@
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "jest",
-    "prepublishOnly": "npm run clean && npm run build"
+    "prepublishOnly": "npm run clean && npm run build",
+    "release": "npm version minor && npm publish --access public"
   },
   "dependencies": {
     "esbuild": "^0.24.0"
