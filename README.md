@@ -78,6 +78,35 @@ export default router.build();
 
 `GET_REACT` is chainable like the other verbs and auto-registers an OpenAPI entry.
 
+### 4. Styling with Tailwind CSS
+
+Tailwind CSS **v4** is bundled and enabled by default — just use utility classes
+in your page components:
+
+```tsx
+// src/app/views/Home.tsx
+export default function Home() {
+  return <h1 className="text-3xl font-bold text-indigo-600">Hello</h1>;
+}
+```
+
+The extension compiles a stylesheet (scanning your components) and injects a
+`<link>` into every page shell automatically. No `tailwind.config.js` is needed.
+
+To customize (add `@theme`, custom CSS, extra `@source` paths), create
+`src/app/views/app.css` — it becomes the Tailwind input:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #5b21b6;
+}
+```
+
+Disable Tailwind with `react({ tailwind: false })`, or point at a different input
+with `react({ cssEntry: 'styles/app.css' })`.
+
 ## API
 
 ### `react(options?)`
@@ -89,6 +118,8 @@ export default router.build();
 | `outDir` | `.kusto/react` | Output dir (relative to project root) for built assets. |
 | `title` | `Kusto React` | Default `<title>`. |
 | `production` | `NODE_ENV==='production'` | Force production (minified) bundle / disable dev rebuild. |
+| `tailwind` | `true` | Compile Tailwind CSS (v4) and link it into every page shell. |
+| `cssEntry` | `views/app.css` | Tailwind input CSS, relative to `src/app`. Falls back to a default `@import "tailwindcss";` if the file is absent. |
 | `head` | – | Extra `<head>` HTML (e.g. stylesheet links). |
 
 ### `router.GET_REACT(component, options?)`

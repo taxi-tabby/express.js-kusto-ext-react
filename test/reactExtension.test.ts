@@ -37,6 +37,32 @@ describe('react() extension', () => {
         expect(html).toContain('<title>Home Title</title>');
     });
 
+    it('GET_REACT links the Tailwind stylesheet by default', async () => {
+        const ext = react({ mountPath: '/r' });
+        const getMock = jest.fn();
+        const ctx: any = { router: { get: getMock }, basePath: '', registerDocumentation: jest.fn() };
+        ext.routerMethods!.GET_REACT(ctx, 'Home');
+        const handler = getMock.mock.calls[0][1];
+        const res: any = { status: jest.fn(() => res), type: jest.fn(() => res), send: jest.fn() };
+        handler({}, res, (e: any) => { throw e; });
+        await tick();
+        const html = res.send.mock.calls[0][0] as string;
+        expect(html).toContain('<link rel="stylesheet" href="/r/client.css" />');
+    });
+
+    it('GET_REACT omits the stylesheet when tailwind is disabled', async () => {
+        const ext = react({ mountPath: '/r', tailwind: false });
+        const getMock = jest.fn();
+        const ctx: any = { router: { get: getMock }, basePath: '', registerDocumentation: jest.fn() };
+        ext.routerMethods!.GET_REACT(ctx, 'Home');
+        const handler = getMock.mock.calls[0][1];
+        const res: any = { status: jest.fn(() => res), type: jest.fn(() => res), send: jest.fn() };
+        handler({}, res, (e: any) => { throw e; });
+        await tick();
+        const html = res.send.mock.calls[0][0] as string;
+        expect(html).not.toContain('rel="stylesheet"');
+    });
+
     it('GET_REACT throws on a missing/invalid component name', () => {
         const ext = react();
         const ctx: any = { router: { get: jest.fn() }, registerDocumentation: jest.fn() };

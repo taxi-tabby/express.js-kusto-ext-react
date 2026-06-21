@@ -11,12 +11,14 @@ import type {
 } from './types';
 import { renderShell } from './shell';
 import { buildClientBundle } from './bundler';
+import { buildCss } from './tailwind';
 
 const DEFAULTS = {
     pagesDir: 'views',
     mountPath: '/__kusto_react',
     outDir: '.kusto/react',
     title: 'Kusto React',
+    cssEntry: 'views/app.css',
 };
 
 /** Normalize a mount path to a leading slash and no trailing slash. */
@@ -41,12 +43,17 @@ export function react(options: ReactExtensionOptions = {}): KustoExtension {
     const outDirRel = options.outDir ?? DEFAULTS.outDir;
     const defaultTitle = options.title ?? DEFAULTS.title;
     const head = options.head;
+    const tailwindEnabled = options.tailwind ?? true;
+    const cssEntryRel = options.cssEntry ?? DEFAULTS.cssEntry;
     const clientUrl = `${mountPath}/client.js`;
+    const cssUrl = tailwindEnabled ? `${mountPath}/client.css` : undefined;
 
     const isProduction = (): boolean => options.production ?? process.env.NODE_ENV === 'production';
     const appDirAbs = (): string => path.resolve(process.cwd(), 'src', 'app');
     const pagesDirAbs = (): string => path.resolve(appDirAbs(), pagesDirRel);
     const outFileAbs = (): string => path.resolve(process.cwd(), outDirRel, 'client.js');
+    const cssEntryAbs = (): string => path.resolve(appDirAbs(), cssEntryRel);
+    const cssOutFileAbs = (): string => path.resolve(process.cwd(), outDirRel, 'client.css');
     const assetsDirAbs = (): string => path.resolve(process.cwd(), outDirRel);
 
     return {
@@ -66,6 +73,7 @@ export function react(options: ReactExtensionOptions = {}): KustoExtension {
                         page: component,
                         props,
                         clientSrc: clientUrl,
+                        cssSrc: cssUrl,
                         title: routeOptions?.title ?? defaultTitle,
                         head,
                     }));
@@ -95,6 +103,19 @@ export function react(options: ReactExtensionOptions = {}): KustoExtension {
                 } catch (error) {
                     ctx.log.Warn('React client bundle build failed on boot; pages may not render', { error });
                 }
+                if (tailwindEnabled) {
+                    try {
+                        await buildCss({
+                            cssEntry: cssEntryAbs(),
+                            outFile: cssOutFileAbs(),
+                            baseDir: pagesDirAbs(),
+                            production: false,
+                        });
+                        ctx.log.Info('Tailwind CSS built for dev');
+                    } catch (error) {
+                        ctx.log.Warn('Tailwind CSS build failed on boot; styles may be missing', { error });
+                    }
+                }
             }
             ctx.app.use(mountPath, express.static(assetsDirAbs()));
             ctx.log.Info(`React assets served at ${mountPath}`);
@@ -109,6 +130,20 @@ export function react(options: ReactExtensionOptions = {}): KustoExtension {
             }
             const { pages } = await buildClientBundle({ pagesDir, outFile, production: ctx.isProduction });
             ctx.log.Info(`React client bundle built: ${pages.length} page(s) -> ${path.relative(ctx.rootDir, outFile)}`);
+            if (tailwindEnabled) {
+                const cssOutFile = path.resolve(ctx.rootDir, outDirRel, 'client.css');
+                try {
+                    await buildCss({
+                        cssEntry: path.resolve(ctx.appDir, cssEntryRel),
+                        outFile: cssOutFile,
+                        baseDir: pagesDir,
+                        production: ctx.isProduction,
+                    });
+                    ctx.log.Info(`Tailwind CSS built -> ${path.relative(ctx.rootDir, cssOutFile)}`);
+                } catch (error) {
+                    ctx.log.Warn('Tailwind CSS build failed', { error });
+                }
+            }
         },
     };
 }

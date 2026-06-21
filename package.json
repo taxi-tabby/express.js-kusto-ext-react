@@ -41,7 +41,10 @@
     "release": "npm version minor && npm publish --access public"
   },
   "dependencies": {
-    "esbuild": "^0.24.0"
+    "@tailwindcss/postcss": "^4.3.1",
+    "esbuild": "^0.24.0",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.1"
   },
   "peerDependencies": {
     "express": "^4.18.0",

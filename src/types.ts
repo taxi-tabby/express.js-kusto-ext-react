@@ -64,6 +64,10 @@ export interface ReactExtensionOptions {
     title?: string;
     /** Force production mode (minified bundle, no dev rebuild). Default: derived from `NODE_ENV`. */
     production?: boolean;
+    /** Compile Tailwind CSS (v4) and link it into every shell. Default: `true`. */
+    tailwind?: boolean;
+    /** Tailwind input CSS path (relative to `src/app`). If absent, a default `@import "tailwindcss";` is used. Default: `views/app.css`. */
+    cssEntry?: string;
     /** Extra `<head>` HTML injected into every shell (e.g. stylesheet links). */
     head?: string;
 }

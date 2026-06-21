@@ -7,6 +7,8 @@ export interface ShellParams {
     props?: Record<string, unknown>;
     /** URL of the client bundle (e.g. `/__kusto_react/client.js`). */
     clientSrc: string;
+    /** URL of the generated stylesheet (e.g. `/__kusto_react/client.css`). When set, a `<link>` is injected. */
+    cssSrc?: string;
     /** Document `<title>`. */
     title: string;
     /** Extra HTML injected into `<head>`. */
@@ -33,13 +35,14 @@ function jsonForScript(value: unknown): string {
 export function renderShell(params: ShellParams): string {
     const pageJson = jsonForScript(params.page);
     const propsJson = jsonForScript(params.props ?? {});
+    const styleLink = params.cssSrc ? `<link rel="stylesheet" href="${escapeHtml(params.cssSrc)}" />\n` : '';
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>${escapeHtml(params.title)}</title>
-${params.head ?? ''}
+${styleLink}${params.head ?? ''}
 </head>
 <body>
 <div id="root"></div>
