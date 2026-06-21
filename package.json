@@ -1,6 +1,6 @@
 {
   "name": "@expressjs-kusto/react",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React rendering extension for the Express.js-Kusto framework — adds router.GET_REACT(...) via the CoC extension system (CSR v1).",
   "keywords": [
     "express",
