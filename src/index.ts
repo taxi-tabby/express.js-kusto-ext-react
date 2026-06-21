@@ -1,7 +1,10 @@
-// The ExpressRouter type augmentation (adds `router.GET_REACT(...)` to IntelliSense) ships as
-// `@expressjs-kusto/react/augment`. Enable it in your activation file with:
-//   /// <reference types="@expressjs-kusto/react/augment" />
-// (It is a separate ambient declaration file so it merges into the host's `@lib` ExpressRouter.)
+// To add `router.GET_REACT(...)` to IntelliSense, augment ExpressRouter in your activation file:
+//   import type { ReactRouteOptions } from '@expressjs-kusto/react';
+//   declare module '@lib/http/routing/expressRouter' {
+//     interface ExpressRouter { GET_REACT(component: string, options?: ReactRouteOptions): this; }
+//   }
+// (A ready-made ambient version also ships as `@expressjs-kusto/react/augment` for tsconfigs that
+//  pick up package types: `/// <reference types="@expressjs-kusto/react/augment" />`.)
 
 export { react } from './reactExtension';
 export { renderShell } from './shell';

@@ -42,14 +42,26 @@ npm install @expressjs-kusto/react react react-dom react-router-dom
 Create `src/app/extensions/react.ts`:
 
 ```typescript
-/// <reference types="@expressjs-kusto/react/augment" />
 import { react } from '@expressjs-kusto/react';
+import type { ReactRouteOptions } from '@expressjs-kusto/react';
 
-export default react();
+declare module '@lib/http/routing/expressRouter' {
+    interface ExpressRouter {
+        GET_REACT(component: string, options?: ReactRouteOptions): this;
+    }
+}
+
+export default react({});
 ```
 
-The triple-slash reference pulls in the `ExpressRouter` type augmentation, so `router.GET_REACT(...)`
-is recognised across your project (IntelliSense + type-checking).
+The `declare module` block augments `ExpressRouter` so `router.GET_REACT(...)` is
+recognised across your project (IntelliSense + type-checking). Declaring it in the
+activation file is the reliable approach — it merges into your host's `@lib`
+`ExpressRouter` regardless of how `types`/`typeRoots` are configured in `tsconfig`.
+
+> Alternatively, if your `tsconfig` picks up ambient package types, you can replace
+> the `declare module` block with a single triple-slash reference:
+> `/// <reference types="@expressjs-kusto/react/augment" />`
 
 ### 2. Add React pages
 
