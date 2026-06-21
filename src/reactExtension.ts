@@ -81,9 +81,12 @@ export function react(options: ReactExtensionOptions = {}): KustoExtension {
                 ctx.router.get('/', (req: Request, res: Response, next: NextFunction) => {
                     serveShell(req, res).catch(next);
                 });
+                // This is an HTML page route, not a JSON API. Declaring contentType: 'html'
+                // makes the framework document it as a text/html page route (no response
+                // schema needed); the docs flexibly recognize it as an extension-added route.
                 ctx.registerDocumentation('GET', '/', {
                     summary: routeOptions?.summary ?? `React page: ${component}`,
-                    responses: { 200: { description: 'HTML shell that boots the React page on the client' } },
+                    contentType: 'html',
                 });
             },
         },
