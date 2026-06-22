@@ -36,6 +36,15 @@ describe('generateEntrySource', () => {
         expect(src).toContain('createRoot');
         expect(src).toContain('BrowserRouter');
     });
+
+    it('hydrates when __KUSTO_SSR__ is set and falls back to createRoot otherwise', () => {
+        const src = generateEntrySource([{ key: 'Home', importPath: './Home' }]);
+        expect(src).toContain('hydrateRoot');
+        expect(src).toContain('createRoot');
+        expect(src).toContain('__KUSTO_SSR__');
+        // hydrateRoot must be imported from react-dom/client alongside createRoot.
+        expect(src).toMatch(/import\s*\{[^}]*hydrateRoot[^}]*\}\s*from\s*['"]react-dom\/client['"]/);
+    });
 });
 
 describe('buildClientBundle (esbuild smoke)', () => {

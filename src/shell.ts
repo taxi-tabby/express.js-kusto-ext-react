@@ -13,6 +13,12 @@ export interface ShellParams {
     title: string;
     /** Extra HTML injected into `<head>`. */
     head?: string;
+    /**
+     * Pre-rendered page markup (from server-side `renderToString`). When set, it is
+     * injected verbatim into `#root` and the client runtime hydrates instead of
+     * doing a fresh client render. When absent, `#root` is empty (CSR).
+     */
+    ssrHtml?: string;
 }
 
 function escapeHtml(value: string): string {
@@ -21,6 +27,23 @@ function escapeHtml(value: string): string {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+
+/**
+ * Reduce props to the exact value the client will hydrate from. The client reads
+ * `window.__KUSTO_PROPS__`, which is `JSON.stringify(props)` (see {@link renderShell}),
+ * so for SSR the server must render from the same JSON-round-tripped value. Otherwise
+ * values that don't survive a JSON round-trip (Date, `undefined`, NaN/Infinity, Map/Set,
+ * functions) diverge between server render and client hydration, causing hydration
+ * mismatches. Non-serializable input (e.g. BigInt) is returned unchanged so the shell's
+ * own serialization surfaces the same error it always has (no SSR-specific regression).
+ */
+export function toSerializableProps(props: Record<string, unknown>): Record<string, unknown> {
+    try {
+        return JSON.parse(JSON.stringify(props ?? {}));
+    } catch {
+        return props ?? {};
+    }
 }
 
 /** Serialize JSON safely for inlining inside a `<script>` (prevents `</script>` / HTML-comment breakout). */
@@ -36,6 +59,10 @@ export function renderShell(params: ShellParams): string {
     const pageJson = jsonForScript(params.page);
     const propsJson = jsonForScript(params.props ?? {});
     const styleLink = params.cssSrc ? `<link rel="stylesheet" href="${escapeHtml(params.cssSrc)}" />\n` : '';
+    // ssrHtml is already valid HTML produced by renderToString — inject it verbatim
+    // (escaping it would corrupt the markup and break hydration).
+    const rootContent = params.ssrHtml ?? '';
+    const ssrFlag = params.ssrHtml ? 'true' : 'false';
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,8 +72,8 @@ export function renderShell(params: ShellParams): string {
 ${styleLink}${params.head ?? ''}
 </head>
 <body>
-<div id="root"></div>
-<script>window.__KUSTO_PAGE__=${pageJson};window.__KUSTO_PROPS__=${propsJson};</script>
+<div id="root">${rootContent}</div>
+<script>window.__KUSTO_PAGE__=${pageJson};window.__KUSTO_PROPS__=${propsJson};window.__KUSTO_SSR__=${ssrFlag};</script>
 <script src="${escapeHtml(params.clientSrc)}" defer></script>
 </body>
 </html>`;

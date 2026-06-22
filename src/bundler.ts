@@ -38,7 +38,7 @@ export function generateEntrySource(pages: DiscoveredPage[]): string {
     const imports = pages.map((p, i) => `import P${i} from ${JSON.stringify(p.importPath)};`).join('\n');
     const registry = pages.map((p, i) => `  ${JSON.stringify(p.key)}: P${i},`).join('\n');
     return `import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 ${imports}
 
@@ -57,7 +57,12 @@ function __kustoMount() {
     el.textContent = 'Kusto React: page "' + name + '" was not found in the client bundle.';
     return;
   }
-  createRoot(el).render(React.createElement(BrowserRouter, null, React.createElement(Page, props)));
+  var element = React.createElement(BrowserRouter, null, React.createElement(Page, props));
+  if (w.__KUSTO_SSR__) {
+    hydrateRoot(el, element);
+  } else {
+    createRoot(el).render(element);
+  }
 }
 
 __kustoMount();

@@ -9,6 +9,7 @@
 export { react } from './reactExtension';
 export { renderShell } from './shell';
 export { discoverPages, generateEntrySource, buildClientBundle } from './bundler';
+export { generateServerEntrySource, buildServerBundle } from './serverBundle';
 
 export type {
     ReactExtensionOptions,
@@ -23,3 +24,4 @@ export type {
 
 export type { ShellParams } from './shell';
 export type { BuildClientOptions, BuildClientResult } from './bundler';
+export type { BuildServerOptions, BuildServerResult, RenderPage } from './serverBundle';

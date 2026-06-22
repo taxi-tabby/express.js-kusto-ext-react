@@ -70,6 +70,14 @@ export interface ReactExtensionOptions {
     cssEntry?: string;
     /** Extra `<head>` HTML injected into every shell (e.g. stylesheet links). */
     head?: string;
+    /**
+     * Default rendering mode for all pages. When `true`, pages are server-rendered
+     * (`renderToString`) and hydrated on the client; when `false`, pages are
+     * client-rendered (CSR). Override per route with `GET_REACT(..., { ssr })`.
+     * Default: `false` (CSR). SSR falls back to CSR if a page cannot be rendered
+     * on the server.
+     */
+    ssr?: boolean;
 }
 
 /** Per-route options for `router.GET_REACT(component, options)`. */
@@ -83,6 +91,11 @@ export interface ReactRouteOptions {
     props?: Record<string, unknown> | ((req: any) => Record<string, unknown> | Promise<Record<string, unknown>>);
     /** OpenAPI summary for this route (passed through to the docs system). */
     summary?: string;
+    /**
+     * Override the rendering mode for this route. `true` server-renders + hydrates,
+     * `false` forces CSR. Defaults to the extension-level `ssr` option.
+     */
+    ssr?: boolean;
 }
 
 /** A discovered React page (file under the pages directory). */
