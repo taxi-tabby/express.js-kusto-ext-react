@@ -1,0 +1,9 @@
+{
+  // Use the TypeScript version installed in this workspace (node_modules) for the
+  // editor's language service, so IDE diagnostics match what `npm run build`/`typecheck`
+  // actually use. A newer global/bundled TS (6.0+) flags `moduleResolution: "node"` as
+  // deprecated; the project builds with TS 5.9.x where it is valid. Pinning avoids that
+  // version-skew warning. (Run "TypeScript: Select TypeScript Version" -> "Use Workspace
+  // Version" once if the editor doesn't switch automatically.)
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
