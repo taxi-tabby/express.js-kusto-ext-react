@@ -20,6 +20,16 @@ describe('generateServerEntrySource', () => {
         // renderPage must be an export of the module.
         expect(src).toMatch(/export\s+function\s+renderPage/);
     });
+
+    it('resolves StaticRouter defensively across react-router v6/v7 (no hard import of react-router-dom/server)', () => {
+        const src = generateServerEntrySource([{ key: 'Home', importPath: './Home' }]);
+        // react-router v7 dropped the react-router-dom/server subpath; a static top-level
+        // import of it throws ERR_PACKAGE_PATH_NOT_EXPORTED at module load under v7.
+        expect(src).not.toMatch(/import\s*\{[^}]*StaticRouter[^}]*\}\s*from\s*['"]react-router-dom\/server['"]/);
+        // It must consult react-router (v7) and react-router-dom/server (v6) at runtime.
+        expect(src).toContain("require('react-router')");
+        expect(src).toContain("require('react-router-dom/server')");
+    });
 });
 
 describe('buildServerBundle (esbuild smoke)', () => {

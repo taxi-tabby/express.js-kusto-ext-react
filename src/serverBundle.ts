@@ -15,8 +15,9 @@ const SSR_EXTERNALS = [
     'react/jsx-dev-runtime',
     'react-dom',
     'react-dom/server',
+    'react-router', // react-router v7: StaticRouter + core APIs live here
     'react-router-dom',
-    'react-router-dom/server',
+    'react-router-dom/server', // react-router v6: StaticRouter lives here
 ];
 
 /**
@@ -29,8 +30,18 @@ export function generateServerEntrySource(pages: DiscoveredPage[]): string {
     const registry = pages.map((p, i) => `  ${JSON.stringify(p.key)}: P${i},`).join('\n');
     return `import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server';
 ${imports}
+
+// StaticRouter moved between major versions of react-router: it lives in
+// 'react-router-dom/server' (v6) and in 'react-router' (v7+, which dropped the
+// react-router-dom/server subpath). Resolve it at runtime against whatever the host
+// installed so SSR works on both — a static import of one path crashes on the other.
+function __resolveStaticRouter() {
+  try { var rr = require('react-router'); if (rr && rr.StaticRouter) return rr.StaticRouter; } catch (e) {}
+  try { var s = require('react-router-dom/server'); if (s && s.StaticRouter) return s.StaticRouter; } catch (e) {}
+  throw new Error('Kusto React: StaticRouter not found. Install react-router (>=7) or react-router-dom (>=6).');
+}
+var StaticRouter = __resolveStaticRouter();
 
 var __KUSTO_REGISTRY = {
 ${registry}
